@@ -16,15 +16,17 @@ class _HomePageState extends State<HomePage> {
   int perc = 0;
 
   void start() {
-    timer = Timer.periodic(const Duration(milliseconds: 50), (timer) {
-      setState(() {
-        width = width + 1;
-        perc = ((width * 100) / widthFull).round();
-        if (width == 200) {
-          timer.cancel();
-        }
+    if (perc == 0) {
+      timer = Timer.periodic(const Duration(milliseconds: 50), (timer) {
+        setState(() {
+          width = width + 1;
+          perc = ((width * 100) / widthFull).round();
+          if (width == 200) {
+            timer.cancel();
+          }
+        });
       });
-    });
+    }
   }
 
   void stop() {
@@ -43,6 +45,7 @@ class _HomePageState extends State<HomePage> {
           borderRadius: BorderRadius.circular(16),
           child: Stack(
             children: [
+              //*BG
               Container(
                 width: widthFull,
                 height: 50,
@@ -56,11 +59,12 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.blue,
               ),
 
+              //*percentage
               Positioned.fill(
                 child: Align(
                   alignment: Alignment.center,
                   child: Text(
-                    perc == 0 ? '' : '${perc} %',
+                    perc == 0 ? '' : '$perc %',
                     style: const TextStyle(
                       color: Colors.white,
                     ),
@@ -71,27 +75,16 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            onPressed: () {
-              stop();
-            },
-            child: const Icon(
-              Icons.restart_alt,
-            ),
-          ),
-          const SizedBox(width: 16.0),
-          FloatingActionButton(
-            onPressed: () {
-              start();
-            },
-            child: const Icon(
-              Icons.play_arrow,
-            ),
-          ),
-        ],
+      //*play/reset button
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          (timer.isActive || width == widthFull) ? stop() : start();
+        },
+        child: Icon(
+          (timer.isActive || width == widthFull)
+              ? Icons.restart_alt
+              : Icons.play_arrow,
+        ),
       ),
     );
   }
